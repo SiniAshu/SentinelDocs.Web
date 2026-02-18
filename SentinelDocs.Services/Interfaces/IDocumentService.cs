@@ -20,5 +20,7 @@ namespace SentinelDocs.Services.Interfaces
         /// Gets all documents for the dashboard view.
         /// </summary>
         Task<IEnumerable<DocumentUploadDto>> GetAllDocuments();
+
+        Task<DocumentUploadDto> GetDocument(int id);
     }
 }

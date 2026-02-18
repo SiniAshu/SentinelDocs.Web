@@ -48,5 +48,16 @@ namespace SentinelDocs.Services.Services
         {
            return await DocRepository.GetAllDocuments();
         }
+        public async Task<DocumentUploadDto> GetDocument(int id)
+        {
+            if (id <= 0) return null;
+
+            var details = await DocRepository.GetDocument(id);
+
+            // Logic Example: You could sort them here or add a "Security Note" 
+            // if the ErrorCount is too high.
+
+            return details;
+        }
     }
 }

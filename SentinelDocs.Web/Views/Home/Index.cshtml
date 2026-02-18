@@ -38,6 +38,7 @@
                     <table class="table table-hover mb-0">
                         <thead class="table-light">
                             <tr>
+                                <th>DocId</th>
                                 <th>File Name</th>
                                 <th>Upload Date</th>
                                 <th class="text-center">Metadata Hits</th>
@@ -50,6 +51,7 @@
                             @foreach (var doc in Model)
                             {
                                 <tr>
+                                    <td><strong>@doc.DocumentID</strong></td>
                                     <td><strong>@doc.FileName</strong></td>
                                     <td>@doc.UploadDate.ToString("MMM dd, yyyy HH:mm")</td>
                                     <td class="text-center">
@@ -58,17 +60,32 @@
                                         </span>
                                     </td>
                                     <td class="text-center">
-                                        <span class="badge rounded-pill @(doc.ErrorCount > 0 ? "bg-primary" : "bg-secondary")">
-                                            @doc.ErrorCount
-                                        </span>
+                                        @if (doc.ErrorCount > 0)
+                                        {
+                                            <span class="badge rounded-pill bg-danger">@doc.ErrorCount</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge rounded-pill bg-light text-muted">0</span>
+                                        }
                                     </td>
                                     <td class="text-center">
-                                        <span class="badge rounded-pill @(doc.WarningCount > 0 ? "bg-primary" : "bg-secondary")">
-                                            @doc.WarningCount
-                                        </span>
+                                        @if (doc.WarningCount > 0)
+                                        {
+                                            <span class="badge rounded-pill bg-warning text-dark">@doc.WarningCount</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge rounded-pill bg-light text-muted">0</span>
+                                        }
                                     </td>
                                     <td>
-                                        <a href="#" class="btn btn-sm btn-outline-primary">View Data</a>
+                                        <a asp-controller="Document"
+                                           asp-action="Details"
+                                           asp-route-id="@doc.DocumentID"
+                                           class="btn btn-sm btn-outline-primary shadow-sm">
+                                            <i class="bi bi-eye"></i> View Data
+                                        </a>
                                     </td>
                                 </tr>
                             }

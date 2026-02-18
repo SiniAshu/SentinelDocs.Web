@@ -79,6 +79,7 @@ namespace SentinelDocs.Infrastructure.Repositories
                 {
                     documents.Add(new DocumentUploadDto()
                     {
+                        DocumentID = Convert.ToInt32(reader["DocId"]),
                         FileName = reader["FileName"].ToString(),
                         UploadDate = Convert.ToDateTime(reader["UploadDate"]),
                         TotalHits = Convert.ToInt32(reader["TotalHits"]),
@@ -89,6 +90,42 @@ namespace SentinelDocs.Infrastructure.Repositories
             }
 
             return documents;
+        }
+
+        public async Task<DocumentUploadDto> GetDocument(int id)
+        {
+            var details = new DocumentUploadDto();
+
+            using (var conn = new SqlConnection(connectionString))
+            {
+                var cmd = new SqlCommand("GetDocument", conn);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@DocID", id);
+
+                await conn.OpenAsync();
+                using var reader = await cmd.ExecuteReaderAsync();
+
+
+                if (await reader.ReadAsync())
+                {
+                    details.FileName = reader["FileName"].ToString();
+                }
+
+                if (await reader.NextResultAsync())
+                {
+                    details.MetaData = new List<MetadataDto>();
+
+                    while (await reader.ReadAsync())
+                    {
+                        details.MetaData.Add(new MetadataDto
+                        {
+                            Category = reader["DataCategory"].ToString(),
+                            Value = reader["ExtractedValue"].ToString()
+                        });
+                    }
+                }
+            }
+            return details;
         }
     }
 }

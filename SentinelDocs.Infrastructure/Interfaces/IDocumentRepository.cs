@@ -16,5 +16,7 @@ namespace SentinelDocs.Infrastructure.Interfaces
         /// Retrieves a summary of all processed documents.
         /// </summary>
         Task<IEnumerable<DocumentUploadDto>> GetAllDocuments();
+
+        Task<DocumentUploadDto> GetDocument(int id);
     }
 }

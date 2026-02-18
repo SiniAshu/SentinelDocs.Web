@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using SentinelDocs.Infrastructure.Repositories;
 using SentinelDocs.Services.Interfaces;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace SentinelDocs.Web.Controllers
 {
@@ -29,6 +31,25 @@ namespace SentinelDocs.Web.Controllers
             await DocService.ProcessDocumentAsync(file);
 
             return RedirectToAction("Index");
+        }
+
+        // This handles the "View Data" button for your 121 records
+        public async Task<IActionResult> Details(int id)
+        {
+            if (id <= 0)
+            {
+                return NotFound();
+            }
+
+            // Fetch the file name and the 121 metadata entries
+            var details = await DocService.GetDocument(id);
+
+            if (details == null)
+            {
+                return NotFound();
+            }
+
+            return View("~/Views/Home/Details.cshtml", details);
         }
     }
 }

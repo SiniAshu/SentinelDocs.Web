@@ -15,7 +15,7 @@
         /// Gets or sets the original name of the uploaded file (e.g., "server_log.txt").
         /// </summary>
         /// <value>The string name including the extension.</value>
-        public required string FileName { get; set; }
+        public string FileName { get; set; }
 
         public DateTime UploadDate { get; set; }
 

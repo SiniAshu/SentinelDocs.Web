@@ -1,0 +1,51 @@
+﻿@model SentinelDocs.Core.DTO.DocumentUploadDto
+
+@{
+    ViewData["Title"] = "Document Detail View";
+    // If the model is null, initialize it as an empty list to prevent crashes
+    var docs = Model ?? new SentinelDocs.Core.DTO.DocumentUploadDto();
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>File Analysis: <span class="text-primary">@Model.FileName</span></h2>
+        <a asp-action="Index" class="btn btn-secondary">Back to Dashboard</a>
+    </div>
+
+    <div class="card shadow">
+        <div class="card-body">
+            <table id="detailsTable" class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Category</th>
+                        <th>Extracted Information</th>
+                        <th>Type</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.MetaData)
+                    {
+                        <tr>
+                            <td><strong>@item.Category</strong></td>
+                            <td><code>@item.Value</code></td>
+                            <td>
+                                @if (item.Value.Contains("ERROR") || item.Value.Contains("CRITICAL"))
+                                {
+                                    <span class="badge bg-danger">Critical</span>
+                                }
+                                else if (item.Category == "IP_Address")
+                                {
+                                    <span class="badge bg-info text-dark">Network</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-light text-dark">General</span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
