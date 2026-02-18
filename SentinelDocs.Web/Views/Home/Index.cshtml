@@ -1,0 +1,89 @@
+﻿@model IEnumerable<SentinelDocs.Core.DTO.DocumentUploadDto>
+
+@{
+    ViewData["Title"] = "Document Dashboard";
+    // If the model is null, initialize it as an empty list to prevent crashes
+    var docs = Model ?? new List<SentinelDocs.Core.DTO.DocumentUploadDto>();
+}
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Upload Document</h5>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Upload" method="post" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label class="form-label">Select Text File (.txt)</label>
+                            <input type="file" name="file" class="form-control" accept=".txt" required />
+                            <div class="form-text">Files are scanned for IPs, Emails, and Errors.</div>
+                        </div>
+                        <button type="submit" class="btn btn-success w-100">
+                            <i class="bi bi-upload"></i> Process & Save
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Processed Documents</h5>
+                    <span class="badge bg-info">Total: @Model.Count()</span>
+                </div>
+                <div class="card-body p-0">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>File Name</th>
+                                <th>Upload Date</th>
+                                <th class="text-center">Metadata Hits</th>
+                                <th>Error Count</th>
+                                <th class="text-center">Warning Count</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var doc in Model)
+                            {
+                                <tr>
+                                    <td><strong>@doc.FileName</strong></td>
+                                    <td>@doc.UploadDate.ToString("MMM dd, yyyy HH:mm")</td>
+                                    <td class="text-center">
+                                        <span class="badge rounded-pill @(doc.TotalHits > 0 ? "bg-primary" : "bg-secondary")">
+                                            @doc.TotalHits
+                                        </span>
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="badge rounded-pill @(doc.ErrorCount > 0 ? "bg-primary" : "bg-secondary")">
+                                            @doc.ErrorCount
+                                        </span>
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="badge rounded-pill @(doc.WarningCount > 0 ? "bg-primary" : "bg-secondary")">
+                                            @doc.WarningCount
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <a href="#" class="btn btn-sm btn-outline-primary">View Data</a>
+                                    </td>
+                                </tr>
+                            }
+                            @if (!Model.Any())
+                            {
+                                <tr>
+                                    <td colspan="4" class="text-center py-4 text-muted">
+                                        No documents processed yet.
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
