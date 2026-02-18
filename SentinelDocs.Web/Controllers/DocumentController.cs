@@ -18,7 +18,7 @@ namespace SentinelDocs.Web.Controllers
         public async Task<IActionResult> Index()
         {
             var data = await DocService.GetAllDocuments();
-            return View("~/Views/Home/Index.cshtml", data);
+            return View(data);
         }
 
         // POST: Document/Upload
@@ -49,7 +49,7 @@ namespace SentinelDocs.Web.Controllers
                 return NotFound();
             }
 
-            return View("~/Views/Home/Details.cshtml", details);
+            return View(details);
         }
     }
 }

@@ -1,0 +1,115 @@
+﻿@model IEnumerable<SentinelDocs.Core.DTO.DocumentUploadDto>
+
+@{
+    ViewData["Title"] = "Document Dashboard";
+    // If the model is null, initialize it as an empty list to prevent crashes
+    var docs = Model ?? new List<SentinelDocs.Core.DTO.DocumentUploadDto>();
+}
+
+@* <div class="container mt-5"> *@
+   @*  <div class="row">
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Upload Document</h5>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Upload" method="post" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label class="form-label">Select Text File (.txt)</label>
+                            <input type="file" name="file" class="form-control" accept=".txt" required />
+                            <div class="form-text">Files are scanned for IPs, Emails, and Errors.</div>
+                        </div>
+                        <button type="submit" class="btn btn-success w-100">
+                            <i class="bi bi-upload"></i> Process & Save
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div> *@
+
+        <div class="container py-4">
+            <div class="row mb-5 justify-content-center">
+                <div class="col-lg-10">
+                    <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+                        <div class="row g-0">
+                            <div class="col-md-4 bg-primary d-flex align-items-center justify-content-center p-4">
+                                <div class="text-center text-white">
+                                    <i class="bi bi-cloud-arrow-up-fill display-4"></i>
+                                    <h4 class="mt-2 fw-bold">SentinelDocs</h4>
+                                    <p class="small opacity-75">Log Ingestion Engine</p>
+                                </div>
+                            </div>
+                            <div class="col-md-8 p-4 bg-white">
+                                <form asp-action="Upload" method="post" enctype="multipart/form-data">
+                                    <label class="form-label fw-bold text-muted small uppercase">Analyze New Log File (.txt)</label>
+                                    <div class="input-group mb-3">
+                                        <input type="file" name="file" class="form-control border-primary-subtle" id="inputGroupFile">
+                                        <button class="btn btn-primary px-4" type="submit">
+                                            <i class="bi bi- lightning-charge-fill me-1"></i> Process
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            @if (!Model.Any())
+            {
+                <div class="text-center py-5 border rounded-4 bg-light bg-opacity-50">
+                    <i class="bi bi-inbox text-muted display-1"></i>
+                    <p class="text-muted mt-3">Waiting for data... Start by uploading a log file above.</p>
+                </div>
+            }
+            else
+            {
+                <div class="row g-4">
+                    @foreach (var doc in Model)
+                    {
+                        var isCritical = doc.ErrorCount > 0;
+                        <div class="col-md-6 col-lg-4">
+                            <div class="card h-100 border-0 shadow-sm rounded-4 hover-lift">
+                                <div class="card-body p-4">
+                                    <div class="d-flex justify-content-between mb-3">
+                                        <span class="badge @(isCritical ? "bg-danger" : "bg-success") rounded-pill">
+                                            <i class="bi @(isCritical ? "bi-exclamation-triangle" : "bi-check-circle") me-1"></i>
+                                            @(isCritical ? "Critical" : "Stable")
+                                        </span>
+                                        <small class="text-muted">ID: #@doc.DocumentID</small>
+                                    </div>
+
+                                    <h5 class="fw-bold text-truncate mb-1">@doc.FileName</h5>
+                                    <p class="text-muted small mb-4">Ingested: @DateTime.Now.ToString("dd MMM, HH:mm")</p>
+
+                                    <div class="d-flex justify-content-between align-items-center bg-light p-3 rounded-3 mb-4">
+                                        <div class="text-center">
+                                            <div class="h5 mb-0 fw-bold">@doc.TotalHits</div>
+                                            <small class="text-muted" style="font-size: 0.65rem;">HITS</small>
+                                        </div>
+                                        <div class="vr mx-2"></div>
+                                        <div class="text-center">
+                                            <div class="h5 mb-0 fw-bold text-danger">@doc.ErrorCount</div>
+                                            <small class="text-danger" style="font-size: 0.65rem;">ERRORS</small>
+                                        </div>
+                                        <div class="vr mx-2"></div>
+                                        <div class="text-center">
+                                            <div class="h5 mb-0 fw-bold text-warning">@doc.WarningCount</div>
+                                            <small class="text-warning" style="font-size: 0.65rem;">WARNS</small>
+                                        </div>
+                                    </div>
+
+                                    <div class="d-grid">
+                                        <a asp-action="Details" asp-route-id="@doc.DocumentID" class="btn btn-dark rounded-pill py-2 fw-bold">
+                                            Explore Data <i class="bi bi-arrow-right ms-1"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+       
