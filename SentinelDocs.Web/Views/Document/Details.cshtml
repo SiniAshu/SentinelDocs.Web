@@ -2,7 +2,6 @@
 
 @{
     ViewData["Title"] = "Document Detail View";
-    // If the model is null, initialize it as an empty list to prevent crashes
     var docs = Model ?? new SentinelDocs.Core.DTO.DocumentUploadDto();
 }
 
@@ -11,6 +10,35 @@
         <h2>File Analysis: <span class="text-primary">@Model.FileName</span></h2>
         <a asp-action="Index" class="btn btn-secondary">Back to Dashboard</a>
     </div>
+
+    <div class="row mb-3 g-2">
+        <!-- Search Extracted Info -->
+        <div class="col-md-4">
+            <input type="text" id="valueSearch" class="form-control" placeholder="Search info (e.g. admin, IP)...">
+        </div>
+
+        <!-- Filter by Category -->
+        <div class="col-md-4">
+            <select id="categoryFilter" class="form-select">
+                <option value="">All Categories</option>
+                @foreach (var cat in Model.MetaData.Select(m => m.Category).Distinct())
+                {
+                    <option value="@cat">@cat</option>
+                }
+            </select>
+        </div>
+
+        <!-- Filter by Type (Badge) -->
+        <div class="col-md-4">
+            <select id="typeFilter" class="form-select">
+                <option value="">All Types</option>
+                <option value="Critical">Critical</option>
+                <option value="Network">Network</option>
+                <option value="General">General</option>
+            </select>
+        </div>
+    </div>
+
 
     <div class="card shadow">
         <div class="card-body">
@@ -49,3 +77,34 @@
         </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const searchInput = document.getElementById('valueSearch');
+        const catFilter = document.getElementById('categoryFilter');
+        const typeFilter = document.getElementById('typeFilter');
+        const rows = document.querySelectorAll('#detailsTable tbody tr');
+
+        function filterTable() {
+            const searchText = searchInput.value.toLowerCase();
+            const catValue = catFilter.value.toLowerCase();
+            const typeValue = typeFilter.value.toLowerCase();
+
+            rows.forEach(row => {
+                const category = row.cells[0].textContent.toLowerCase();
+                const info = row.cells[1].textContent.toLowerCase();
+                const type = row.cells[2].textContent.trim().toLowerCase();
+
+                const matchesSearch = info.includes(searchText);
+                const matchesCat = catValue === "" || category.includes(catValue);
+                const matchesType = typeValue === "" || type === typeValue;
+
+                row.style.display = (matchesSearch && matchesCat && matchesType) ? "" : "none";
+            });
+        }
+
+        searchInput.addEventListener('keyup', filterTable);
+        catFilter.addEventListener('change', filterTable);
+        typeFilter.addEventListener('change', filterTable);
+    });
+</script>
